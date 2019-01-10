@@ -1,0 +1,45 @@
+<html>
+<Head>
+</html>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="egmap.js"></script>
+<script>"use strict"
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(4)
+	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
+//	map.panTo([ 35.944571, 136.186228 ]) // Hana道場
+//	map.addIcon(35.943560, 136.188917, "鯖江駅")
+	map.addIcon(35.944571, 136.186228 , "<a href=http://hanadojo.com/ target=_blank>Hana道場</a>", "icon-hanadojo.png", 64)
+//	map.addIcon(35.944571, 136.186228 , function() { window.open("http://hanadojo.com/", "_blank") }, "icon-hanadojo.png", 64)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+}
+h1 {
+	font-size: 5vw;
+	margin: 0;
+}
+#mapid {
+	height: 60vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+</style>
+
+</Head>
+<body>
+<h1>egmap.js - Leaflet x 地理院地図</h1>
+<div id="mapid"></div>
+</body>
+</html>

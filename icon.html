@@ -1,0 +1,74 @@
+<html>
+<Head>
+</html>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<link rel="stylesheet" href="leaflet.css"/>
+<script src="leaflet.js"></script>
+<script>"use strict"
+
+window.onload = function() {
+	var map = L.map('mapid')
+
+	L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
+		attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>"',
+		maxZoom: 18,
+	}).addTo(map);
+
+	var ll = [ 35.943560,136.188917 ] // 鯖江駅
+	var zoom = 13
+	map.setView(ll, zoom)
+
+	// アイコン
+	var layer = L.layerGroup()
+    layer.addTo(map)
+    layer.addIcon = function(lat, lng, name, iconurl, iconsize, callback) {
+		var marker = null
+		if (iconurl) {
+			icon = L.icon({
+	            iconUrl: iconurl,
+	            iconSize: [ iconsize, iconsize ],
+	            iconAnchor: [ iconsize / 2, iconsize / 5 ]
+			})
+			marker = L.marker([ lat, lng ], {
+	            title : name,
+	            icon : icon,
+	        })
+		} else {
+			marker = L.marker([ lat, lng ], { title: name })
+		}
+        marker.bindPopup(
+            "<h2>" + name + "</h2>",
+            {
+                maxWidth: 500
+            }
+        );
+        marker.on("click", function() {
+			if (callback)
+	            callback(name);
+        });
+        this.addLayer(marker);
+        return marker
+	}
+	
+	layer.addIcon(35.943560, 136.188917, "鯖江駅")
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+#mapid {
+	height: 60vh;
+}
+</style>
+
+</Head>
+<body>
+<h1>Leaflet x 地理院地図</h1>
+<div id="mapid"></div>
+</body>
+</html>
