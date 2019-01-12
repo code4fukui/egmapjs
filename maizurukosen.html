@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>舞鶴高専訪問マップ 2018.1.11 egmap.js - Leaflet x 地理院地図</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="egmap.js"></script>
+<script>"use strict"
+
+var DATA = [
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-00.jpg', width: 610, height: 413, lat: 35.4963444, lng: 135.4398194 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-01.jpg', width: 610, height: 345, lat: 35.4956861, lng: 135.4404 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-03.jpg', width: 610, height: 385, lat: 35.4964916, lng: 135.4399861 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-04.jpg', width: 610, height: 359, lat: 35.4962916, lng: 135.4399555 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-05.jpg', width: 610, height: 441, lat: 35.4963138, lng: 135.439925 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-06.jpg', width: 610, height: 345, lat: 35.4963111, lng: 135.4400333 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-07.jpg', width: 610, height: 425, lat: 35.4956972, lng: 135.4403222 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-08.jpg', width: 610, height: 393, lat: 35.4966805, lng: 135.4403527 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-09.jpg', width: 610, height: 352, lat: 35.49575, lng: 135.4402916 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-11.jpg', width: 610, height: 326, lat: 35.4965222, lng: 135.4397583 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-12.jpg', width: 610, height: 405, lat: 35.4966611, lng: 135.4399555 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-13.jpg', width: 610, height: 418, lat: 35.4963527, lng: 135.4397722 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-14.jpg', width: 610, height: 348, lat: 35.4957277, lng: 135.4403694 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-15.jpg', width: 610, height: 333, lat: 35.4954138, lng: 135.4395916 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-16.jpg', width: 610, height: 410, lat: 35.4959972, lng: 135.4415583 },
+	{ url: 'https://fukuno.jig.jp/img3/maizurukosen201801/maizurukosen201901-17.jpg', width: 610, height: 411, lat: 35.4958277, lng: 135.4402777 },
+]
+
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(4)
+
+	var lls = []
+	for (var i = 0; i < DATA.length; i++) {
+		var d = DATA[i]
+		var name = d.url.substring(d.url.lastIndexOf('/') + 1)
+		map.addIcon(d.lat, d.lng, "<a href=" + d.url + " target=_blank><img width='300' src='" + d.url + "'><br>" + name + "</a>", d.url, d.width / 10, d.height / 10)
+		
+		lls.push([ d.lat, d.lng ])
+	}
+	map.fitBounds(lls)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+}
+h1 {
+	font-size: 5vw;
+	margin: 0;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 60vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+</style>
+
+</Head>
+<body>
+<h1>舞鶴高専訪問マップ 2018.1.11</h1>
+<div id=sub>egmap.js - Leaflet x 地理院地図</div>
+<div id="mapid"></div>
+
+App: <a href=http://fukuno.jig.jp/2364>舞鶴高専訪問マップ</a><br>
+Lib: <a href=http://fukuno.jig.jp/2363>egmapjs</a><br>
+
+</body>
+</html>
