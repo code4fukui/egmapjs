@@ -1,9 +1,15 @@
-<!DOCTYPE html><html lang="ja">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta charset='utf-8'/>
+<meta property="og:image" content="">
+<link rel="apple-touch-icon" href=""/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 
-</html><link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+<title>osm x leafletjs</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
 integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
 crossorigin=""/>
 
@@ -12,19 +18,24 @@ crossorigin=""/>
    integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
    crossorigin=""></script>
 
-<script>
-window.onload = function() {
-	var ll = [ 35.943560,136.188917 ];
-	var mymap = L.map('mapid').setView(ll, 13)
+<script>"use strict"
 
-	var tiles = "http://tile.openstreetmap.jp/{z}/{x}/{y}.png"
+window.onload = function() {
+	const ll = [ 35.943560,136.188917 ];
+	const map = L.map('mapid').setView(ll, 13)
+
+	const tiles = "http://tile.openstreetmap.jp/{z}/{x}/{y}.png"
 	// 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}'
 	L.tileLayer(tiles, {
 	    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 	    maxZoom: 18,
 	    id: 'mapbox.streets',
 //	    accessToken: 'your.mapbox.access.token'
-	}).addTo(mymap);
+	}).addTo(map);
+
+	setInterval(function() {
+		alert("テスト表示のみ可能 / only test purpose\nこのダイアログは、10秒間隔で表示されます / alert every 10 sec")
+	}, 10 * 1000)
 }
 
 </script>
@@ -33,11 +44,8 @@ window.onload = function() {
 	height: 500px;
 }
 </style>
-
-</Head>
+</head>
 <body>
-aa
-		<div id="mapid"></div>
-		aa
-	</body>
+<div id="mapid"></div>
+</body>
 </html>

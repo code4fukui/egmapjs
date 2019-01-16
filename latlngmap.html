@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>緯度経度地図 - egmapjs</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="egmap.js"></script>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script>"use strict"
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(6)
+	map.panTo([ 35.944571, 136.186228 ]) // Hana道場
+
+	// センタークロス追加
+	const iconcenter = L.icon({
+		iconUrl: 'crosshairs.png',
+		iconRetinaUrl: 'crosshairs.png',
+		iconSize: [ 35, 35 ],
+		iconAnchor: [ 17, 17 ],
+	});
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	crosshair.addTo(map);
+	map.on('move', function() {
+		crosshair.setLatLng(map.getCenter());
+	});	
+
+	var showLL = function() {
+		var ll = map.getCenter()
+		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+	}
+	showLL()
+	map.on("move", showLL)
+	
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+	background: white;
+}
+a {
+	color: gray !important;
+}
+h1 {
+	font-size: 3vh;
+	margin: 0;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 70vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+#tfll {
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 120%;
+	width: 100%;
+	border: 1px solid gray;
+}
+.credit {
+	margin-top: 1vh;
+	font-size: 90%;
+}
+</style>
+
+</Head>
+<body>
+<h1>緯度経度地図 - egmapjs</h1>
+<div id="mapid"></div>
+<input type=text id="tfll">
+
+<div class=credit>
+App: <a href=http://fukuno.jig.jp/2364>緯度経度地図 light</a>
+Lib: <a href=http://fukuno.jig.jp/2363>egmapjs</a><br>
+ご要望は「<a href=https://facebook.com/taisuke.fukuno/>こちら</a>」までお気軽にお寄せください<br>
+</div>
+
+</body>
+</html>
