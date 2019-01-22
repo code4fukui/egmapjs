@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>避難所マップ with SPARQL（サンプル） - egmapjs</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script src="odp.js"></script><!-- SPARQLでodpへアクセスするためのライブラリ -->
+<script>"use strict"
+
+window.onload = function() {
+	var map = initMap('mapid')
+
+    // SPARQLエンドポイント
+	setSPARQLEndpoint("https://sparql.opendata.cc/data/sparql")
+
+	// <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/jrrk#EmergencyFacility>.
+			
+
+	// SPARQLクエリー
+	var query = `
+		prefix ic: <http://imi.go.jp/ns/core/rdf#>
+		prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+		select ?uri ?name ?lat ?lng {
+			?uri ic:種別 "避難所".
+			?uri ic:名称 [ ic:表記 ?name ].
+			?uri ic:地理座標 [ ic:緯度 ?lat; ic:経度 ?lng; ].
+			filter(contains(str(?name),"体育館"))
+		} limit 1000
+	`
+/*
+			filter(
+				xsd:float(?lat) < 35.7 && xsd:float(?lng) > 139.7 &&
+				xsd:float(?lat) > 35.6 && xsd:float(?lng) < 139.8
+			)
+*/
+
+	querySPARQL(query, function(data) {
+		var lls = []
+		var items = data.results.bindings;
+		for (var i = 0; i < items.length; i++) {
+			var item = items[i];
+			console.log(item.uri);
+
+			var lat = item.lat.value;
+			var lng = item.lng.value;
+			var name = item.name.value;
+			
+			map.addIcon(lat, lng, name, "icon-refuge.png", 64, 64)
+			lls.push([ lat, lng ])
+		}
+		map.fitBounds(lls)
+
+		setShowLL(map)
+	});
+}
+
+const setShowLL = function(map) {
+	// センタークロス追加
+	const iconcenter = L.icon({
+		iconUrl: 'crosshairs.png',
+		iconRetinaUrl: 'crosshairs.png',
+		iconSize: [ 35, 35 ],
+		iconAnchor: [ 17, 17 ],
+	});
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	crosshair.addTo(map);
+	map.on('move', function() {
+		crosshair.setLatLng(map.getCenter());
+	});	
+
+	var showLL = function() {
+		var ll = map.getCenter()
+		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+	}
+	showLL()
+	map.on("move", showLL)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+	background: white;
+}
+a {
+	color: gray !important;
+}
+h1 {
+	font-size: 3vh;
+	margin: 0;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 80vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+#tfll {
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 120%;
+	width: 100%;
+	border: 1px solid gray;
+}
+.credit {
+	margin-top: 1vh;
+	font-size: 90%;
+}
+</style>
+
+</Head>
+<body>
+<h1>避難所マップ with SPARQL（サンプル） - egmapjs</h1>
+<div id="mapid"></div>
+<input type=text id="tfll">
+
+<div class=credit>
+App: <a href=http://fukuno.jig.jp/>避難所マップ with SPARQL（サンプル） - egmapjs</a> CC BY fukuno.jig.jp<br>
+Lib: <a href=http://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
+ご要望は「<a href=https://www.facebook.com/taisuke.fukuno/posts/10158114309768626>こちら</a>」までお気軽にお寄せください<br>
+</div>
+
+</body>
+</html>

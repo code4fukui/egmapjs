@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>緯度経度地図 - egmapjs</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script>"use strict"
+
+var DATA = [
+{ name: "新井総合コミュニティセンター", ll: [ 37.022839,138.250807 ] },
+{ name: "新井小学校体育館", ll: [ 37.022941,138.247435 ] },
+{ name: "妙高市役所", ll: [37.025090,138.253516] },
+]
+
+var BASEURL = "https://fukuno.jig.jp/img3/20190121/"
+var PHOTO = [
+{ name: "myoko1-00.jpg", latlng: [ 37.0824277,138.2499555 ] },
+{ name: "myoko1-01.jpg", latlng: [ 37.0583888,138.2601472 ] },
+{ name: "myoko1-02.jpg", latlng: [ 37.0583111,138.2603444 ] },
+{ name: "myoko1-03.jpg", latlng: [ 37.0582972,138.2601611 ] },
+{ name: "myoko1-05.jpg", latlng: [ 37.0583611,138.2601777 ] },
+{ name: "myoko1-06.jpg", latlng: [ 37.0257722,138.2530527 ] },
+{ name: "myoko1-07.jpg", latlng: [ 37.0246861,138.2560277 ] },
+{ name: "myoko1-08.jpg", latlng: [ 37.0256194,138.2532500 ] },
+{ name: "myoko1-11.jpg", latlng: [ 37.0263472,138.2542583 ] },
+{ name: "myoko1-12.jpg", latlng: [ 37.0261611,138.2541194 ] },
+{ name: "myoko1-14.jpg", latlng: [ 37.0263277,138.2543194 ] },
+{ name: "myoko1-15.jpg", latlng: [ 37.0808055,138.2475444 ] },
+{ name: "myoko1-16.jpg", latlng: [ 37.0808000,138.2475888 ] },
+{ name: "myoko1-17.jpg", latlng: [ 37.0806166,138.2474361 ] },
+{ name: "myoko1-18.jpg", latlng: [ 37.0811805,138.2478166 ] },
+{ name: "myoko1-19.jpg", latlng: [ 37.0806916,138.2476805 ] },
+{ name: "myoko1-21.jpg", latlng: [ 37.0805277,138.2475138 ] },
+]
+
+var PHOTO_SIZE = [
+{ name: "myoko1-00.jpg", size: [ 1220,915 ] },
+{ name: "myoko1-01.jpg", size: [ 1220,915 ] },
+{ name: "myoko1-02.jpg", size: [ 1220,915 ] },
+{ name: "myoko1-03.jpg", size: [ 1220,915 ] },
+{ name: "myoko1-05.jpg", size: [ 1220,812 ] },
+{ name: "myoko1-06.jpg", size: [ 1220,757 ] },
+{ name: "myoko1-07.jpg", size: [ 1220,616 ] },
+{ name: "myoko1-08.jpg", size: [ 1220,753 ] },
+{ name: "myoko1-11.jpg", size: [ 1220,767 ] },
+{ name: "myoko1-12.jpg", size: [ 1220,831 ] },
+{ name: "myoko1-14.jpg", size: [ 1220,722 ] },
+{ name: "myoko1-15.jpg", size: [ 1220,686 ] },
+{ name: "myoko1-16.jpg", size: [ 1220,735 ] },
+{ name: "myoko1-17.jpg", size: [ 1220,807 ] },
+{ name: "myoko1-18.jpg", size: [ 1220,915 ] },
+{ name: "myoko1-19.jpg", size: [ 1220,915 ] },
+{ name: "myoko1-21.jpg", size: [ 1220,920 ] },
+]
+const getSize = function(name) {
+	for (var i = 0; i < PHOTO_SIZE.length; i++)
+		if (PHOTO_SIZE[i].name == name)
+			return PHOTO_SIZE[i].size
+	return null
+}
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(4)
+
+	var lls = []
+	for (var i = 0; i < DATA.length; i++) {
+		var d = DATA[i]
+		var lat = d.ll[0]
+		var lng = d.ll[1]
+		map.addIcon(lat, lng, d.name, "icon-refuge.png", 64, 64)
+		lls.push([ lat, lng ])
+	}
+
+	// 写真
+	for (var i = 0; i < PHOTO.length; i++) {
+		var d = PHOTO[i]
+		var size = getSize(d.name)
+		var lat = d.latlng[0]
+		var lng = d.latlng[1]
+		map.addIcon(lat, lng, d.name, BASEURL + d.name, size[0] * 64 / 1220, size[1] * 64 / 1220)
+//		lls.push([ lat, lng ])
+	}
+
+	map.fitBounds(lls)
+
+	setShowLL(map)
+}
+
+const setShowLL = function(map) {
+	// センタークロス追加
+	const iconcenter = L.icon({
+		iconUrl: 'crosshairs.png',
+		iconRetinaUrl: 'crosshairs.png',
+		iconSize: [ 35, 35 ],
+		iconAnchor: [ 17, 17 ],
+	});
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	crosshair.addTo(map);
+	map.on('move', function() {
+		crosshair.setLatLng(map.getCenter());
+	});	
+
+	var showLL = function() {
+		var ll = map.getCenter()
+		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+	}
+	showLL()
+	map.on("move", showLL)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+	background: white;
+}
+a {
+	color: gray !important;
+}
+h1 {
+	font-size: 3vh;
+	margin: 0;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 80vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+#tfll {
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 120%;
+	width: 100%;
+	border: 1px solid gray;
+}
+.credit {
+	margin-top: 1vh;
+	font-size: 90%;
+}
+</style>
+
+</Head>
+<body>
+<h1>妙高市避難所マップ（サンプル） - egmapjs</h1>
+<div id="mapid"></div>
+<input type=text id="tfll">
+
+<div class=credit>
+App: <a href=http://fukuno.jig.jp/2374>妙高市避難所マップ（サンプル）</a> CC BY fukuno.jig.jp<br>
+Data: <a href=http://www.city.myoko.niigata.jp/formunicipal/3189.html>CC BY 避難所一覧 - 妙高市オープンデータ 妙高市役所</a><br>
+Icon: <a href=https://www.irasutoya.com/2013/11/blog-post_4505.html>津波避難標識のマーク | かわいいフリー素材集 いらすとや</a>（<a href=icon-refuge.png>加工して利用</a>）<br>
+Lib: <a href=http://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
+</div>
+
+</body>
+</html>
