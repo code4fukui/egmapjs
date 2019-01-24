@@ -37,7 +37,7 @@ window.onload = function() {
 			const url = d.url
 //			console.log([pref, city, yomi, phrase ].join(" "))
 			if ([pref, city, yomi, phrase ].join(" ").indexOf(keyword) >= 0) {
-				const s = "<a href=" + url + ">" + pref + "<br>" + city + " (" + yomi + ")</a><br>" + phrase
+				const s = "<a href=" + url + " target=_blank>" + pref + "<br>" + city + " (" + yomi + ")</a><br>" + phrase
 				icons.push(map.addIcon(lat, lng, s))
 				lls.push([ lat, lng ])
 			}
