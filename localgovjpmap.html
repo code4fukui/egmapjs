@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>フレーズで探そう日本の地方自治体マップ - egmapjs</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script src="https://code4fukui.github.io/localgovjp/localgovjp.js"></script>
+<script>"use strict"
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(4)
+	map.panTo([ 35.944571, 136.186228 ]) // Hana道場
+
+	var icons = []
+
+	const addIcons = function(keyword) {
+		for (var i = 0; i < icons.length; i++) {
+			map.iconlayer.removeLayer(icons[i])
+		}
+
+		const data = LOCALGOV_JP
+		var lls = []
+		for (var i = 0; i < data.length; i++) {
+			var d = data[i]
+			const lat = d.lat
+			const lng = d.lng
+			const pref = d.pref
+			const city = d.city
+			const phrase = d.phrase
+			const yomi = d.citykana
+			const url = d.url
+//			console.log([pref, city, yomi, phrase ].join(" "))
+			if ([pref, city, yomi, phrase ].join(" ").indexOf(keyword) >= 0) {
+				const s = "<a href=" + url + ">" + pref + "<br>" + city + " (" + yomi + ")</a><br>" + phrase
+				icons.push(map.addIcon(lat, lng, s))
+				lls.push([ lat, lng ])
+			}
+		}
+		if (lls.length > 0) {
+			map.fitBounds(lls)
+			result.textContent = '"' + keyword + '"にマッチする日本の地方自治体は ' + lls.length + "件"
+		} else {
+			result.textContent = '"' + keyword + '"にマッチする日本の地方自治体はありません'
+		}
+	}
+
+	const search = function() {
+		if (tfsearch.value.length > 0)
+			addIcons(tfsearch.value)
+	}
+	tfsearch.onchange = search
+	search()
+
+	setShowLL(map)
+}
+
+const setShowLL = function(map) {
+	// センタークロス追加
+	const iconcenter = L.icon({
+		iconUrl: 'crosshairs.png',
+		iconRetinaUrl: 'crosshairs.png',
+		iconSize: [ 35, 35 ],
+		iconAnchor: [ 17, 17 ],
+	});
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	crosshair.addTo(map);
+	map.on('move', function() {
+		crosshair.setLatLng(map.getCenter());
+	});	
+
+	var showLL = function() {
+		var ll = map.getCenter()
+		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+	}
+	showLL()
+	map.on("move", showLL)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+	background: white;
+}
+a {
+	color: gray !important;
+}
+h1 {
+	font-size: 3vh;
+	margin: 0;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 80vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+#tfll {
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 120%;
+	width: 100%;
+	border: 1px solid gray;
+}
+#tfsearch {
+	box-sizing: border-box;
+	font-size: 120%;
+	width: 100%;
+	border: 1px solid gray;
+}
+.credit {
+	margin-top: 1vh;
+	font-size: 90%;
+}
+</style>
+
+</Head>
+<body>
+<h1>フレーズで探そう日本の地方自治体マップ - egmapjs</h1>
+<input type=text id="tfsearch" placeholder="検索" value="福">
+<div id="result"></div>
+<div id="mapid"></div>
+<input type=text id="tfll">
+
+<div class=credit>
+App: <a href=https://fukuno.jig.jp/2377>フレーズで探そう日本の地方自治体マップ</a> CC BY fukuno.jig.jp<br>
+Data: <a href=https://github.com/code4fukui/localgovjp>CC0 list of local government in Japan / 日本の地方自治体</a><br>
+Lib: <a href=https://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
+</div>
+
+</body>
+</html>
