@@ -53,8 +53,14 @@ window.onload = function() {
 	const search = function() {
 		if (tfsearch.value.length > 0)
 			addIcons(tfsearch.value)
+		document.location.hash = encodeURIComponent(tfsearch.value)
 	}
 	tfsearch.onchange = search
+
+	if (document.location.hash.length > 1) {
+		tfsearch.value = decodeURIComponent(document.location.hash.substring(1))
+	}
+
 	search()
 
 	setShowLL(map)
