@@ -30,13 +30,16 @@ window.onload = function() {
 		select ?uri ?name ?lat ?lng {
 			?uri ic:名称 [ ic:表記 ?name ].
 			?uri ic:地理座標 [ ic:緯度 ?lat; ic:経度 ?lng; ].
-			filter(contains(str(?name),''))
+			filter(contains(str(?name),'駐車場'))
 			filter(
 				xsd:float(?lat) < $LAT_MAX && xsd:float(?lng) > $LNG_MIN &&
 				xsd:float(?lat) > $LAT_MIN && xsd:float(?lng) < $LNG_MAX
 			)
 		} limit 100
 	`
+
+//	?uri ic:種別 "駐車場".
+//	filter(contains(str(?name),"体育館"))
 	var p = map.getCenter()
 	query = query.replace("$LAT_MAX", p.lat + .1)
 	query = query.replace("$LAT_MIN", p.lat - .1)
@@ -53,7 +56,7 @@ window.onload = function() {
 			var lng = item.lng.value;
 			var name = item.name.value;
 			
-			map.addIcon(lat, lng, name)
+			map.addIcon(lat, lng, name, "icon-carparking.png", 64, 64)
 			lls.push([ lat, lng ])
 		}
 //		map.fitBounds(lls)
