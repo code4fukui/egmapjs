@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>colorsight - WebMegane</title>
+<meta property="og:image" content="color.jpg">
+<link rel="apple-touch-icon" href="color.jpg"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+<script src="fukuno.js"></script>
+<script>"use strict";
+
+window.onload = function() {
+	startAR()
+/*
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(4)
+	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
+//	map.panTo([ 35.944571, 136.186228 ]) // Hana道場
+//	map.addIcon(35.943560, 136.188917, "鯖江駅")
+	map.addIcon(35.944571, 136.186228 , "<a href=http://hanadojo.com/ target=_blank>Hana道場</a>", "icon-hanadojo.png", 64)
+//	map.addIcon(35.944571, 136.186228 , function() { window.open("http://hanadojo.com/", "_blank") }, "icon-hanadojo.png", 64)
+}
+*/
+}
+
+const startAR = function(callback) {
+	const USE_CAMERA_FRONT = false;
+//	var videoop = USE_CAMERA_FRONT ? true : { facingMode : { exact : "environment" } };
+//	var videoop = USE_CAMERA_FRONT ? true : { facingMode : { ideal : "environment" } };
+	var videoop = USE_CAMERA_FRONT ? true : {
+		facingMode : { ideal : "environment" },
+		width: { min: 640, ideal: 1920 },
+		height: { min: 480, ideal: 1080 }
+//		width: { min: 640, ideal: 1280, max: 1920 },
+//		height: { min: 480, ideal: 720, max: 1080 }
+	};
+	const medias = { audio: false, video: videoop };
+	
+//	dump(navigator.mediaDevices.getSupportedConstraints());
+	
+	navigator.getUserMedia(medias, function(stream) {
+			video.srcObject = stream;
+		},
+		function(err) {
+			alert(err);
+		}
+	);
+	
+	
+	
+	var g = canvas.getContext("2d");
+	var cnt = 0;
+	// color
+	var sum = [ 0, 0, 0 ];
+	var ncol = 0;
+
+	var img = new Image()
+	img.src = "ar-test.png"
+
+	var draw = function() {
+		const cw = window.innerWidth * window.devicePixelRatio;
+		const ch = window.innerHeight * window.devicePixelRatio;
+		canvas.width = cw;
+		canvas.height = ch;
+		
+		const vw = video.videoWidth;
+		const vh = video.videoHeight;
+		const cw2 = cw // / 2;
+		const caspect = ch / cw2;
+		const vaspect = vh / vw;
+		
+		const fitwidth = caspect < vaspect; // auto fit screen
+		//const fitwidth = true; // force fit width
+		//const fitwidth = false; // force fit height
+		
+		var pos = [];
+		if (fitwidth) {
+			const vh2 = vw * caspect;
+			if (vh2 > vh) {
+				const cy = (vh2 - vh) / 2 / (vw / cw2);
+				const ch2 = cw2 * vaspect;
+				g.drawImage(video, 0, 0, vw, vh, 0, cy, cw2, ch2);
+				//g.drawImage(video, 0, 0, vw, vh, cw2, cy, cw2, ch2);
+				pos = [ 0, cy, cw2, ch2, cw2, cy, cw2, ch2 ];
+			} else {
+				const vy = (vh - vh2) / 2;
+				g.drawImage(video, 0, vy, vw, vh2, 0, 0, cw2, ch);
+				//g.drawImage(video, 0, vy, vw, vh2, cw2, 0, cw2, ch);
+				pos = [ 0, 0, cw2, ch, cw2, 0, cw2, ch ];
+			}
+		} else {
+			const vw2 = vh / caspect;
+			if (vw2 > vw) {
+				const cx = (vw2 - vw) / 2 / (vh / ch);
+				const cw3 = ch / vaspect;
+				g.drawImage(video, 0, 0, vw, vh, cx, 0, cw3, ch);
+				//g.drawImage(video, 0, 0, vw, vh, cw2 + cx, 0, cw3, ch);
+				pos = [ cx, 0, cw3, ch, cw2 + cx, 0, cw3, ch ];
+			} else {
+				const vx = (vw - vw2) / 2;
+				g.drawImage(video, vx, 0, vw2, vh, 0, 0, cw2, ch);
+				//g.drawImage(video, vx, 0, vw2, vh, cw2, 0, cw2, ch);
+				pos = [ 0, 0, cw2, ch, cw2, 0, cw2, ch ];
+			}
+		}
+		
+		var drawText = function(s, x, y) {
+			for (var i = 0; i < 8; i += 4) {
+				g.strokeText(s, pos[i] + x * pos[i + 2], pos[i + 1] + y * pos[i + 3]);
+				g.fillText(s, pos[i] + x * pos[i + 2], pos[i + 1] + y * pos[i + 3]);
+			}
+		};
+		var fillRect = function(x, y, w, h) {
+			for (var i = 0; i < 8; i += 4) {
+				g.fillRect(pos[i] + x * pos[i + 2], pos[i + 1] + y * pos[i + 3], w * pos[i + 2], h * pos[i + 3]);
+			}
+		};
+				
+
+		var ox = pos[0] + pos[2] / 2;
+		var oy = pos[1] + pos[3] / 2;
+
+		g.drawImage(img, ox - img.width / 2, oy - img.height / 2)
+		
+		cnt++;
+		requestAnimationFrame(draw);
+	};
+	draw();
+	
+	canvas.onmousedown = function() {
+		history.back()
+		//canvas.style.display = "none"
+		//video.srcObject = null
+	}
+};
+
+</script>
+<style>
+body {
+	margin: 0;
+	background-color: black;
+}
+#video {
+	display: block;
+	width: 100%;
+	transform: scale(0.01);
+}
+#canvas {
+	z-index: 3;
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+#debug {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: rgb(1, 1, 1, 0.5);
+	z-index: 2;
+	color: white;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<video id="video" autoplay playsinline></video>
+<div id=debug></div>
+</body>
+</html>
