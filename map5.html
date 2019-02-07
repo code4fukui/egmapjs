@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
 
-<title>マップアプリ3</title>
+<title>マップアプリ5</title>
 
 <link rel="apple-touch-icon" href="app-icon.png"/>
 <meta property="og:image" content="ogp-image.jpg"/>
@@ -26,9 +26,18 @@ window.onload = function() {
 		select ?uri ?name ?lat ?lng {
 			?uri ic:名称 [ ic:表記 ?name ].
 			?uri ic:地理座標 [ ic:緯度 ?lat; ic:経度 ?lng; ].
-			filter(contains(str(?name),'鯖江'))
+			filter(contains(str(?name),'体育館'))
+			filter(
+				xsd:float(?lat) < $LAT_MAX && xsd:float(?lng) > $LNG_MIN &&
+				xsd:float(?lat) > $LAT_MIN && xsd:float(?lng) < $LNG_MAX
+			)
 		} limit 100
 	`
+	var p = map.getCenter()
+	query = query.replace("$LAT_MAX", p.lat + .1)
+	query = query.replace("$LAT_MIN", p.lat - .1)
+	query = query.replace("$LNG_MAX", p.lng + .1)
+	query = query.replace("$LNG_MIN", p.lng - .1)
 
 	querySPARQL(query, function(data) {
 		var items = data.results.bindings;
@@ -51,7 +60,7 @@ h1 { font-size: 5vw; margin: 0; }
 
 </style></head><body>
 
-<h1>egmapjs - Leaflet x 地理院地図</h1>
+<h1>エリアで絞り込む体育館マップ - egmapjs</h1>
 <div id="mapid"></div>
 
 </body></html>

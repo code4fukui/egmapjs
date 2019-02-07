@@ -1,46 +1,34 @@
-<!DOCTYPE html><html lang="ja">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
+
 <title>マップアプリ2</title>
-<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+<link rel="apple-touch-icon" href="app-icon.png"/>
+<meta property="og:image" content="ogp-image.jpg"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
 <script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<link rel="stylesheet" href="https://code4fukui.github.io/egmapjs/egmap.css"/>
 <script src="https://fukuno.jig.jp/fukuno.js"></script>
-
+<script src="https://code4fukui.github.io/egmapjs/sparql.js"></script>
 <script>"use strict"
+
 window.onload = function() {
 	var map = initMap('mapid')
 	map.setZoom(16)
 	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
-
-	map.addIcon(35.943560, 136.188917, "鯖江駅")
+	map.addIcon(35.943560,136.188917, "鯖江駅")
 }
+
 </script>
 <style>
-body {
-	margin: 0;
-	font-family: sans-serif;
-	text-align: center;
-}
-h1 {
-	font-size: 5vw;
-	margin: 0;
-}
-#mapid {
-	height: 60vh;
-}
-.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
-    x-filter: sepia(100%) brightness(95%); /* セピア */
-    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
-    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
-}
-</style>
 
-</Head>
-<body>
-<h1>egmap.js - Leaflet x 地理院地図</h1>
+body { margin: 0; font-family: sans-serif; text-align: center; }
+h1 { font-size: 5vw; margin: 0; }
+#mapid { height: 60vh; }
+
+</style></head><body>
+
+<h1>egmapjs - Leaflet x 地理院地図</h1>
 <div id="mapid"></div>
-</body>
-</html>
+
+</body></html>

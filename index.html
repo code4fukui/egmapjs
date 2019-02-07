@@ -5,72 +5,28 @@
 <link rel="apple-touch-icon" href=""/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-		
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
-
-<script>"use strict"
-
-window.onload = function() {
-	var map = L.map('mapid')
-
-	L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-		attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>"',
-		maxZoom: 18,
-	}).addTo(map);
-
-	var ll = [ 35.943560,136.188917 ] // 鯖江駅
-	var zoom = 13
-	map.setView(ll, zoom)
-
-	// アイコン
-	var layer = L.layerGroup()
-    layer.addTo(map)
-    layer.addIcon = function(lat, lng, name, iconurl, iconsize, callback) {
-		var marker = null
-		if (iconurl) {
-			icon = L.icon({
-	            iconUrl: iconurl,
-	            iconSize: [ iconsize, iconsize ],
-	            iconAnchor: [ iconsize / 2, iconsize / 5 ]
-			})
-			marker = L.marker([ lat, lng ], {
-	            title : name,
-	            icon : icon,
-	        })
-		} else {
-			marker = L.marker([ lat, lng ], { title: name })
-		}
-        marker.bindPopup(
-            "<h2>" + name + "</h2>",
-            {
-                maxWidth: 500
-            }
-        );
-        marker.on("click", function() {
-			if (callback)
-	            callback(name);
-        });
-        this.addLayer(marker);
-        return marker
-	}
-	
-	layer.addIcon(35.943560, 136.188917, "鯖江駅")
-}
-</script>
 <style>
-body {
-	margin: 0;
-	font-family: sans-serif;
-}
-#mapid {
-	height: 60vh;
-}
 </style>
 
 </Head>
 <body>
-<h1>Leaflet x 地理院地図</h1>
-<div id="mapid"></div>
+<h1>かんたん地図フレームワーク - egmapjs</h1>
+<ol>
+	<li><a href=map1.html>地図を表示する map1.html</a> <a href=https://github.com/code4fukui/egmapjs/blob/master/map1.html>プログラム</li>
+	<li><a href=map2.html>ピンを表示する map2.html</a> <a href=https://github.com/code4fukui/egmapjs/blob/master/map2.html>プログラム</a></li>
+	<li><a href=map3.html>APIを使って表示する(SPARQL) map3.html</a> <a href=https://github.com/code4fukui/egmapjs/blob/master/map3.html>プログラム</a></li>
+	<li><a href=map4.html>駐車場マップをつくる(SPARQL) map4.html</a> <a href=https://github.com/code4fukui/egmapjs/blob/master/map4.html>プログラム</a></li>
+	<li><a href=map5.html>エリアで絞り込む(SPARQL) map5.html</a> <a href=https://github.com/code4fukui/egmapjs/blob/master/map5.html>プログラム</a></li>
+</ol>
+<hr>
+<h3>egmapjs サンプル</h3>
+<ul>
+	<li><a href=samples/hanadojo.html>Hana道場はどこ？</a></li>
+	<li><a href=samples/maizurukosen.html>舞鶴高専訪問マップ</a></li>
+	<li><a href=samples/myokorefuge.html>妙高市避難所マップデモ</a></li>
+	<li><a href=samples/sparqlrefugemap.html>避難所マップ(SPARQL API)</a></li>
+	<li><a href=samples/localgovjpmap.html>フレーズで探そう日本の地方自治体マップ</a></li>
+	<li><a href=samples/latlngmap.html>緯度経度マップ</a></li>
+</ul>
 </body>
 </html>
