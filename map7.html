@@ -94,6 +94,8 @@ window.onload = function() {
 		})
 	}
 	showIcons()
+
+	map.on("click", (e) => alert(e.latlng))
 }
 const challenge = function(e) {
 	var n = rnd(9) + 1
