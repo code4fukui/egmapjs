@@ -39,8 +39,8 @@ var initMap = function(mapid) {
 			marker = L.marker([ lat, lng ], { title: name })
 		}
 		if (typeof nameorparam == "function") {
-			marker.on("click", function() {
-				nameorparam(name)
+			marker.on("click", function(e) {
+				nameorparam(e, name)
 			});
 		} else {
 			marker.bindPopup(
@@ -49,9 +49,9 @@ var initMap = function(mapid) {
 					maxWidth: 500
 				}
 			);
-			marker.on("click", function() {
+			marker.on("click", function(e) {
 				if (nameorparam && nameorparam.callback)
-					nameorparam.callback(name)
+					nameorparam.callback(e, name)
 			});
 		}
 		this.iconlayer.addLayer(marker);

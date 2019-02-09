@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
+
+<title>マップアプリ7</title>
+
+<link rel="apple-touch-icon" href="app-icon.png"/>
+<meta property="og:image" content="ogp-image.jpg"/>
+<meta name="viewport" content="width=device-width"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+<script xsrc="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<script src="egmap.js"></script>
+<link rel="stylesheet" href="https://code4fukui.github.io/egmapjs/egmap.css"/>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script src="https://code4fukui.github.io/egmapjs/sparql.js"></script>
+<script>"use strict"
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(16)
+	//map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
+	map.panTo([ 35.929991,136.186429 ]) // サンドーム福井
+//	map.addIcon(35.943560,136.188917, "鯖江駅")
+
+	var firstflg = true
+
+	//var current = map.addIcon(0, 0, "現在地", "icon-walking.png", 64, 64)
+	var current = map.addIcon(35.929991,136.186429, "現在地", "icon-walking.png", 64, 64)
+	
+	navigator.geolocation.watchPosition(function(gpos) {
+		const pos = [ gpos.coords.latitude, gpos.coords.longitude ]
+		current.setLatLng(pos)
+		map.panTo(pos)
+
+		if (firstflg) {
+			firstflg = false
+			showIcons()
+		}
+	}, function() {
+//		showIcons()
+	})
+	const showIcons = function() {
+		// SPARQLクエリー
+		var query = `
+			prefix ic: <http://imi.go.jp/ns/core/rdf#>
+			prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+			prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+			prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+			prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+			select ?uri ?name ?lat ?lng {
+				?uri rdf:type <http://purl.org/jrrk#Hydrant>.
+				?uri rdfs:label ?name.
+				?uri geo:lat ?lat.
+				?uri geo:long ?lng.
+				filter(
+					xsd:float(?lat) < $LAT_MAX && xsd:float(?lng) > $LNG_MIN &&
+					xsd:float(?lat) > $LAT_MIN && xsd:float(?lng) < $LNG_MAX
+				)
+			} limit 1000
+		`
+		var p = map.getCenter()
+		//const dl = .01
+		const dl = .01
+		query = query.replace("$LAT_MAX", p.lat + dl)
+		query = query.replace("$LAT_MIN", p.lat - dl)
+		query = query.replace("$LNG_MAX", p.lng + dl)
+		query = query.replace("$LNG_MIN", p.lng - dl)
+
+		querySPARQL(query, function(data) {
+			var items = data.results.bindings;
+			for (var i = 0; i < items.length; i++) {
+				var item = items[i];
+				var lat = item.lat.value;
+				var lng = item.lng.value;
+				var name = item.name.value;
+
+				const onclick = function(e) {
+					var ll = current.getLatLng()
+					var dis = calcDistance(ll.lat, ll.lng, e.latlng.lat, e.latlng.lng)
+					if (dis > 0.002 * 2) {
+						alert("もうちょっと近付こう！")
+						return
+					}
+					if (!challenge(e)) {
+						alert("残念!")
+						return
+					}
+					alert("おめでとう！")
+					map.removeLayer(e.target)
+					map.addIcon(e.latlng.lat, e.latlng.lng, "checked!", "icon-firehydrant.png", 48, 48)
+				}
+				map.addIcon(lat, lng, onclick, "icon-firehydrant-d.png", 48, 48)
+			}
+		})
+	}
+	showIcons()
+}
+const challenge = function(e) {
+	var n = rnd(9) + 1
+	var m = rnd(9) + 1
+	var a = prompt(n + " + " + m + "?")
+	return parseInt(a) == n + m
+}
+const calcDistance = function(lat1, lng1, lat2, lng2) {
+	const d1 = parseFloat(lat1) - parseFloat(lat2)
+	const d2 = parseFloat(lng1) - parseFloat(lng2)
+	return Math.sqrt(d1 * d1 + d2 * d2)
+}
+
+</script>
+<style>
+
+body { margin: 0; font-family: sans-serif; text-align: center; }
+h1 { font-size: 5vw; margin: 0; }
+#mapid { height: 60vh; }
+
+</style></head><body>
+
+<h1>消火栓へゴー - egmapjs</h1>
+<div id="mapid"></div>
+
+</body></html>
