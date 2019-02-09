@@ -17,6 +17,8 @@ window.onload = function() {
 	map.setZoom(16)
 	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
 	map.addIcon(35.943560,136.188917, "鯖江駅")
+	map.addIcon(35.944571, 136.186228 , "Hana道場", "icon/hanadojo.png", 64)
+	map.on("click", (e) => alert(e.latlng))
 }
 
 </script>
@@ -28,7 +30,11 @@ h1 { font-size: 5vw; margin: 0; }
 
 </style></head><body>
 
-<h1>egmapjs - Leaflet x 地理院地図</h1>
+<h1>マップアプリ2</h1>
 <div id="mapid"></div>
+
+<img id=qrcode><script>addEventListener("load", () => qrcode.src = "http://chart.apis.google.com/chart?chs=140x140&cht=qr&chl=" + encodeURIComponent(document.location))</script><br>
+
+<a href=https://fukuno.jig.jp/2393>簡単地図アプリ egmapjs チュートリアル</a>
 
 </body></html>

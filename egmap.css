@@ -5,3 +5,6 @@
     x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
     filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
 }
+a {
+    color: #444 !important;
+}

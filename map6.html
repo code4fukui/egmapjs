@@ -17,7 +17,7 @@ window.onload = function() {
 	var map = initMap('mapid')
 	map.setZoom(16)
 	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
-//	map.addIcon(35.943560,136.188917, "鯖江駅")
+	map.addIcon(35.944571, 136.186228 , "Hana道場", "icon/hanadojo.png", 64)
 
 	var current = map.addIcon(0, 0, "現在地", "icon-walking.png", 64, 64)
 	navigator.geolocation.watchPosition(function(gpos) {
@@ -40,5 +40,9 @@ h1 { font-size: 5vw; margin: 0; }
 
 <h1>いまここマップ - egmapjs</h1>
 <div id="mapid"></div>
+
+<img id=qrcode><script>addEventListener("load", () => qrcode.src = "http://chart.apis.google.com/chart?chs=140x140&cht=qr&chl=" + encodeURIComponent(document.location))</script><br>
+
+<a href=https://fukuno.jig.jp/2393>簡単地図アプリ egmapjs チュートリアル</a>
 
 </body></html>
