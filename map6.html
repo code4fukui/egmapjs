@@ -19,7 +19,7 @@ window.onload = function() {
 	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
 	map.addIcon(35.944571, 136.186228 , "Hana道場", "icon/hanadojo.png", 64)
 
-	var current = map.addIcon(0, 0, "現在地", "icon-walking.png", 64, 64)
+	var current = map.addIcon(0, 0, "現在地", "icon/walking.png", 64, 64)
 	navigator.geolocation.watchPosition(function(gpos) {
 		const pos = [ gpos.coords.latitude, gpos.coords.longitude ]
 		current.setLatLng(pos)

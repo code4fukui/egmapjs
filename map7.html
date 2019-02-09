@@ -23,7 +23,6 @@ window.onload = function() {
 	var firstflg = true
 
 	var current = map.addIcon(0, 0, "現在地", "icon/walking.png", 64, 64)
-	
 	navigator.geolocation.watchPosition(function(gpos) {
 		// 位置情報取得に成功したとき
 		const pos = [ gpos.coords.latitude, gpos.coords.longitude ]
