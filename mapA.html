@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
+
+<title>マップアプリA</title>
+
+<link rel="apple-touch-icon" href="app-icon.png"/>
+<meta property="og:image" content="ogp-image.jpg"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<link rel="stylesheet" href="https://code4fukui.github.io/egmapjs/egmap.css"/>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script src="https://code4fukui.github.io/egmapjs/sparql.js"></script>
+
+<!-- ルート探索用 -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<script>"use strict"
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(14)
+	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
+	map.addIcon(35.944571, 136.186228 , "Hana道場", "icon/hanadojo.png", 64)
+
+	// ルート探索
+	L.Routing.control({
+		waypoints: [
+			L.latLng(35.943560,136.188917), // 鯖江駅
+			L.latLng(35.930609, 136.185646) // サンドーム福井
+		]
+	}).addTo(map);
+
+}
+
+</script>
+<style>
+
+body { margin: 0; font-family: sans-serif; text-align: center; }
+h1 { font-size: 5vw; margin: 0; }
+#mapid { height: 60vh; }
+
+</style></head><body>
+
+<h1>ルート探索サンプル - egmapjs</h1>
+<div id="mapid"></div>
+
+<img id=qrcode><script>addEventListener("load", () => qrcode.src = "http://chart.apis.google.com/chart?chs=140x140&cht=qr&chl=" + encodeURIComponent(document.location))</script><br>
+
+<a href=https://fukuno.jig.jp/2393>簡単地図アプリ egmapjs チュートリアル</a>
+
+</body></html>
