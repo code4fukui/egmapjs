@@ -31,6 +31,24 @@ window.onload = function() {
 		]
 	}).addTo(map);
 
+	// ルート探索 線のスタイル変更
+	L.Routing.control({
+		waypoints: [
+			L.latLng(35.930609, 136.185646), // サンドーム福井
+			L.latLng(35.94271, 136.193065), // 秋吉鯖江店
+		],
+		lineOptions: {
+			styles: [
+				{ color: 'black', opacity: 0.15, weight: 9 * 2 },
+				{ color: 'green', opacity: 0.8, weight: 6 * 2 },
+				{ color: 'blue', opacity: 1, weight: 2 * 2 }
+			]
+		}
+	}).addTo(map);
+
+	// 緯度経度表示
+	map.on("click", (e) => alert(e.latlng))
+
 }
 
 </script>
