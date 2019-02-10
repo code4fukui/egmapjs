@@ -27,13 +27,14 @@ window.onload = function() {
 		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 		prefix jrrk: <http://purl.org/jrrk#>
 
-		select ?uri ?name ?lat ?lng ?plugs {
+		select ?uri ?name ?lat ?lng ?wifi ?plugs ?charge {
 			?uri rdf:type <http://purl.org/jrrk#PublicWIFI>.
 			?uri rdfs:label ?name.
 			?uri geo:lat ?lat.
 			?uri geo:long ?lng.
-			?uri jrrk:hasPlugs ?plugs.
-			filter(contains(str(?plugs),'有'))
+			optional { ?uri jrrk:hasWIFI ?wifi. }
+			optional { ?uri jrrk:hasPlugs ?plugs. }
+			optional { ?uri jrrk:charge ?charge. }
 			filter(
 				xsd:float(?lat) < $LAT_MAX && xsd:float(?lng) > $LNG_MIN &&
 				xsd:float(?lat) > $LAT_MIN && xsd:float(?lng) < $LNG_MAX
@@ -55,8 +56,11 @@ window.onload = function() {
 			var lat = item.lat.value
 			var lng = item.lng.value
 			var name = item.name.value
-			var plugs = item.plugs.value
-			map.addIcon(lat, lng, "<a href=" + uri + ">" + name + "</a>")
+			var wifi = item.wifi ? item.wifi.value : ""
+			var plugs = item.plugs ? item.plugs.value : ""
+			var charge = item.charge ? item.charge.value : ""
+			var s = "<a href=" + uri + ">" + name + "</a><br>WiFi: " + wifi + "<br>電源:" + plugs + "<br>料金など:" + charge
+			map.addIcon(lat, lng, s)
 		}
 	})
 
@@ -71,7 +75,7 @@ h1 { font-size: 5vw; margin: 0; }
 
 </style></head><body>
 
-<h1>電源マップ - egmapjs</h1>
+<h1>WiFiマップ - egmapjs</h1>
 <div id="mapid"></div>
 
 <img id=qrcode><script>addEventListener("load", () => qrcode.src = "http://chart.apis.google.com/chart?chs=140x140&cht=qr&chl=" + encodeURIComponent(document.location))</script><br>
