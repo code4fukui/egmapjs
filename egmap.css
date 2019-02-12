@@ -5,6 +5,9 @@
     x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
     filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
 }
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
 a {
     color: #444 !important;
 }

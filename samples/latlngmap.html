@@ -2,11 +2,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<title>緯度経度地図 - egmapjs</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>緯度経度表示 - egmapjs</title>
+<meta name="viewport" content="width=device-width"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
-
+<link rel="stylesheet" href="https://code4fukui.github.io/egmapjs/egmap.css"/>
 <script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
 <script src="https://fukuno.jig.jp/fukuno.js"></script>
 <script>"use strict"
@@ -22,20 +22,21 @@ window.onload = function() {
 		iconRetinaUrl: 'crosshairs.png',
 		iconSize: [ 35, 35 ],
 		iconAnchor: [ 17, 17 ],
-	});
-	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	})
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable: false })
 	crosshair.addTo(map);
 	map.on('move', function() {
 		crosshair.setLatLng(map.getCenter());
-	});	
+	})
 
 	var showLL = function() {
 		var ll = map.getCenter()
-		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+		const sep = chktab.checked ? "\t" : ","
+		tfll.value = fixfloat(ll.lat, 6) + sep + fixfloat(ll.lng, 6)
 	}
 	showLL()
 	map.on("move", showLL)
-	
+	chktab.onchange = showLL
 }
 </script>
 <style>
@@ -49,46 +50,51 @@ a {
 	color: gray !important;
 }
 h1 {
-	font-size: 3vh;
-	margin: 0;
+	font-size: 3.5vh;
+	margin: 0.5vh;
 }
 #sub {
 	font-size: 4vw;
 }
 #mapid {
-	height: 80vh;
-}
-.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
-    x-filter: sepia(100%) brightness(95%); /* セピア */
-    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
-    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
-}
-.leaflet-marker-pane > a {
-	word-break: break-all;
+	height: 75vh;
 }
 #tfll {
 	box-sizing: border-box;
 	text-align: center;
 	font-size: 120%;
-	width: 100%;
+	width: 90%;
 	border: 1px solid gray;
+}
+#tfllbox {
+	text-align: left;
+}
+#spantab {
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 120%;
+	width: 10%;
+	padding: 0px 5px;
+	x-border: 1px solid gray;
 }
 .credit {
 	margin-top: 1vh;
 	font-size: 90%;
 }
+#debug {
+	text-align: left;
+}
 </style>
 
 </Head>
 <body>
-<h1>緯度経度地図 - egmapjs</h1>
+<h1>緯度経度表示 - egmapjs</h1>
 <div id="mapid"></div>
-<input type=text id="tfll">
+<div id=tfllbox><input type=text id="tfll"><label id=spantab><input type=checkbox id=chktab>タブ</label></div>
 
 <div class=credit>
-App: <a href=http://fukuno.jig.jp/2364>緯度経度地図</a> CC BY fukuno.jig.jp, 
-Lib: <a href=http://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
-ご要望は「<a href=https://www.facebook.com/taisuke.fukuno/posts/10158114309768626>こちら</a>」までお気軽にお寄せください<br>
+App: <a href=https://fukuno.jig.jp/2369>緯度経度地図</a> CC BY fukuno.jig.jp<br>
+Lib: <a href=https://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
 </div>
 
 </body>
