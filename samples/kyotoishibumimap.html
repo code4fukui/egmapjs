@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="apple-touch-icon" href="kyotoishibumimap.jpg" />
+<meta property="og:image" content="kyotoishibumimap.jpg" />
+<title>全1470個所 いしぶみマップ - 京都市オープンデータ x egmapjs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script>"use strict"
+
+window.onload = function() {
+	const map = initMap('mapid')
+	//map.setZoom(4)
+
+	const url = "https://fukuno.jig.jp/app/csv/data/ishibumi-data-281211.csv"
+	getJSON(url, function(csv) {
+		//dump(csv);
+		let lls = []
+		const icon = "icon-illustya-moses_jikkai.png"
+		let cnt = 0
+		for (let i = 1; i < csv.length; i++) {
+			const c = csv[i]
+			let d = {
+				num: c[0],
+				name: c[1],
+				address: c[2],
+				lat: c[3],
+				lng: c[4]
+			}
+			if (!d.lat || !d.lng) {
+				console.log("err: " + d.name + ", " + d.address + ", " + d.lat + ", " + d.lng)
+				cnt++
+				continue
+			} else {
+				//console.log("err: " + d.name + ", " + d.address + ", " + d.lat + ", " + d.lng)
+			}
+			//map.addIcon(d.lat, d.lng, d.name, icon, 64)
+			map.addIcon(d.lat, d.lng, [ d.num, d.name, d.address, d.lat + "," + d.lng ].join("<br>"))
+			lls.push([ d.lat, d.lng ])
+		}
+		//alert(cnt) // =85
+		//alert(lls.length) // =1470
+		map.fitBounds(lls)
+		setShowLL(map)
+	})
+}
+
+const setShowLL = function(map) {
+	// センタークロス追加
+	const iconcenter = L.icon({
+		iconUrl: 'crosshairs.png',
+		iconRetinaUrl: 'crosshairs.png',
+		iconSize: [ 35, 35 ],
+		iconAnchor: [ 17, 17 ],
+	});
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	crosshair.addTo(map);
+	map.on('move', function() {
+		crosshair.setLatLng(map.getCenter());
+	});	
+
+	var showLL = function() {
+		var ll = map.getCenter()
+		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+	}
+	showLL()
+	map.on("move", showLL)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+	background: white;
+}
+a {
+	color: gray !important;
+}
+h1 {
+	font-size: 4vw;
+	padding: 1vw;
+	margin: 0;
+	color: white;
+	background-color: #9cd;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 80vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+#debug {
+	text-align: left;
+}
+#tfll {
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 120%;
+	width: 100%;
+	border: 1px solid gray;
+}
+.credit {
+	margin-top: 1vh;
+	font-size: 90%;
+}
+</style>
+
+</Head>
+<body>
+<h1>全1470個所 いしぶみマップ？</h1>
+<div id="mapid"></div>
+<input type=text id="tfll">
+
+<div class=credit>
+App: <a href=https://fukuno.jig.jp/2437>全1470個所 いしぶみマップ？</a> CC BY fukuno.jig.jp<br>
+Data: <a href=https://data.city.kyoto.lg.jp/node/14455>CC BY いしぶみリスト | 京都市オープンデータポータルサイト</a><br>
+Icon: <a href=https://www.irasutoya.com/2016/10/blog-post_315.html>津波避難標識のマーク | かわいいフリー素材集 いらすとや</a><br>
+Lib: <a href=https://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
+</div>
+
+</body>
+</html>
