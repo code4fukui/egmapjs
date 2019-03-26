@@ -12,6 +12,41 @@
 <script src="https://fukuno.jig.jp/fukuno.js"></script>
 <script>"use strict"
 
+const convertJP2WGS = function(o) {
+	if (!o.lat || !o.lng)
+		return
+	const lat2 = o.lat - o.lat * 0.00010695 + o.lng * 0.000017464 + 0.0046017
+	const lng2 = o.lng - o.lat * 0.000046038 - o.lng * 0.000083043 + 0.010040
+	o.lat = lat2
+	o.lng = lng2
+}
+// script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js"
+	/*
+	proj4.defs([
+            ["EPSG:4301", //東京測地系/日本測地系 SRID=4301
+                "+proj=longlat +ellps=bessel +towgs84=-146.414,507.337,680.507,0,0,0,0 +no_defs"
+            ],
+            ["EPSG:4612", //日本測地系/JGD2000 SRID=4612
+                "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs"
+            ]
+		]);
+	*/	
+function convertTokyo2WGS(o) {
+	if (!o.lat || !o.lng)
+		return
+	let ret = proj4("EPSG:4301", "EPSG:4326", [ parseFloat(o.lng), parseFloat(o.lat) ])
+	o.lat = ret[1]
+	o.lng = ret[0]
+}
+const convertDMS2D = function(o) {
+	if (!o.lat || !o.lng)
+		return
+	const dms2d = function(dms) {
+		return (Math.floor(dms) + Math.floor(dms * 100) % 100 / 60 + Math.floor(dms * 10000) % 100 / (60 * 60)).toFixed(5)
+	}
+	o.lat = dms2d(o.lat)
+	o.lng = dms2d(o.lng)
+}
 window.onload = function() {
 	const map = initMap('mapid')
 	//map.setZoom(4)
@@ -31,21 +66,40 @@ window.onload = function() {
 				lat: c[3],
 				lng: c[4]
 			}
+//			convertJP2WGS(d)
+//			convertTokyo2WGS(d)
+			convertDMS2D(d)
 			if (!d.lat || !d.lng) {
-				console.log("err: " + d.name + ", " + d.address + ", " + d.lat + ", " + d.lng)
+				//console.log("err: " + d.name + ", " + d.address + ", " + d.lat + ", " + d.lng)
 				cnt++
 				continue
 			} else {
 				//console.log("err: " + d.name + ", " + d.address + ", " + d.lat + ", " + d.lng)
 			}
 			//map.addIcon(d.lat, d.lng, d.name, icon, 64)
-			map.addIcon(d.lat, d.lng, [ d.num, d.name, d.address, d.lat + "," + d.lng ].join("<br>"))
+			let name = "<a href=https://www2.city.kyoto.lg.jp/somu/rekishi/fm/ishibumi/html/" + d.num.toLowerCase() + ".html target=_blank rel=noopener>" + d.name + "</a>"
+			map.addIcon(d.lat, d.lng, [ d.num, name, d.address, d.lat + "," + d.lng ].join("<br>"))
 			lls.push([ d.lat, d.lng ])
 		}
 		//alert(cnt) // =85
 		//alert(lls.length) // =1470
 		map.fitBounds(lls)
 		setShowLL(map)
+
+		let watchid = null
+		gotohere.onclick = function() {
+			if (watchid)
+				navigator.geolocation.clearWatch(watchid)
+			watchid = navigator.geolocation.watchPosition(function(gpos) {
+				const pos = [ gpos.coords.latitude, gpos.coords.longitude ]
+				console.log(pos)
+				map.panTo(pos)
+				navigator.geolocation.clearWatch(watchid)
+				watchid = null
+			}, function() {
+				alert("現在位置に取得に失敗！")
+			})
+		}
 	})
 }
 
@@ -65,7 +119,8 @@ const setShowLL = function(map) {
 
 	var showLL = function() {
 		var ll = map.getCenter()
-		tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+		if (window.tfll)
+			tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
 	}
 	showLL()
 	map.on("move", showLL)
@@ -116,18 +171,26 @@ h1 {
 	margin-top: 1vh;
 	font-size: 90%;
 }
+#gotohere {
+	background: orange;
+	color: white;
+	font-weight: bold;
+	padding: 1em;
+	margin: 0.5em;
+}
 </style>
 
 </Head>
 <body>
-<h1>全1470個所 いしぶみマップ？</h1>
+<h1>全1470個所 いしぶみマップ</h1>
 <div id="mapid"></div>
-<input type=text id="tfll">
+<!--<input type=text id="tfll">-->
+<button id=gotohere>現在位置へ移動</button>
 
 <div class=credit>
-App: <a href=https://fukuno.jig.jp/2437>全1470個所 いしぶみマップ？</a> CC BY fukuno.jig.jp<br>
+App: <a href=https://fukuno.jig.jp/2437>全1470個所 いしぶみマップ</a> CC BY fukuno.jig.jp<br>
 Data: <a href=https://data.city.kyoto.lg.jp/node/14455>CC BY いしぶみリスト | 京都市オープンデータポータルサイト</a><br>
-Icon: <a href=https://www.irasutoya.com/2016/10/blog-post_315.html>津波避難標識のマーク | かわいいフリー素材集 いらすとや</a><br>
+Icon: <a href=https://www.irasutoya.com/2016/10/blog-post_315.html>モーセの十戒のイラスト | かわいいフリー素材集 いらすとや</a><br>
 Lib: <a href=https://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>)<br>
 </div>
 
