@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
+
+<title>バス停さがしマップ</title>
+
+<link rel="apple-touch-icon" href="icon-busstop-big.png"/>
+<meta property="og:image" content="busstopmap.jpg"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<link rel="stylesheet" href="https://code4fukui.github.io/egmapjs/egmap.css"/>
+<script src="https://fukuno.jig.jp/fukuno.js"></script>
+<script src="https://code4fukui.github.io/egmapjs/sparql.js"></script>
+<script>"use strict"
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(18)
+	map.panTo([ 35.943560,136.188917 ]) // 鯖江駅
+
+	let icons = []
+	const showIcons = function() {
+		for (let icon of icons)
+			map.removeLayer(icon)
+		icons = []
+		
+		// SPARQLクエリー (参考データ https://fukuno.jig.jp/app/odp/finddata.html )
+		var query = `
+			prefix ic: <http://imi.go.jp/ns/core/rdf#>
+			prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+			prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+			prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+			prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+			prefix jrrk: <http://purl.org/jrrk#>
+
+			select ?uri ?name ?lat ?lng ?wifi ?plugs ?charge {
+				?uri rdf:type <http://purl.org/jrrk#BusStop>.
+				?uri rdfs:label ?name.
+				?uri geo:lat ?lat.
+				?uri geo:long ?lng.
+				filter(
+					xsd:float(?lat) < $LAT_MAX && xsd:float(?lng) > $LNG_MIN &&
+					xsd:float(?lat) > $LAT_MIN && xsd:float(?lng) < $LNG_MAX
+				)
+			} limit 1000
+		`
+		var p = map.getCenter()
+		const dl = .02 // 取得する広さ 大きいほど広く取得
+		query = query.replace("$LAT_MAX", p.lat + dl)
+		query = query.replace("$LAT_MIN", p.lat - dl)
+		query = query.replace("$LNG_MAX", p.lng + dl)
+		query = query.replace("$LNG_MIN", p.lng - dl)
+
+		querySPARQL(query, function(data) {
+			var items = data.results.bindings
+			for (var i = 0; i < items.length; i++) {
+				var item = items[i]
+				var uri = item.uri.value
+				var lat = item.lat.value
+				var lng = item.lng.value
+				var name = item.name.value
+				var s = "<a href=" + uri + ">" + name + "</a>"
+				icons.push(map.addIcon(lat, lng, s, "icon-busstop.png", 64	))
+			}
+		})
+	}
+	showIcons()
+
+	showhere.onclick = function() {
+		showIcons()
+	}
+	let watchid = null
+	gohere.onclick = function() {
+		if (watchid)
+			navigator.geolocation.clearWatch(watchid)
+		watchid = navigator.geolocation.watchPosition(function(gpos) {
+			const pos = [ gpos.coords.latitude, gpos.coords.longitude ]
+			console.log(pos)
+			map.panTo(pos)
+			showIcons()
+			navigator.geolocation.clearWatch(watchid)
+			watchid = null
+		}, function() {
+			alert("現在位置に取得に失敗！")
+		})
+	}
+
+	setShowLL(map)
+}
+
+const setShowLL = function(map) {
+	// センタークロス追加
+	const iconcenter = L.icon({
+		iconUrl: 'crosshairs.png',
+		iconRetinaUrl: 'crosshairs.png',
+		iconSize: [ 35, 35 ],
+		iconAnchor: [ 17, 17 ],
+	});
+	const crosshair = new L.marker(map.getCenter(), { icon: iconcenter, clickable:false })
+	crosshair.addTo(map);
+	map.on('move', function() {
+		crosshair.setLatLng(map.getCenter());
+	});	
+
+	var showLL = function() {
+		var ll = map.getCenter()
+		if (window.tfll)
+			tfll.value = fixfloat(ll.lat, 6) + "," + fixfloat(ll.lng, 6)
+	}
+	showLL()
+	map.on("move", showLL)
+}
+
+</script>
+<style>
+
+body { margin: 0; font-family: sans-serif; text-align: center; }
+h1 { font-size: 3vw; margin: 0; }
+#mapid { height: 60vh; }
+button {
+	background: #fa7;
+	color: white;
+	font-weight: bold;
+	padding: 1em;
+	margin: 0.5em;
+}
+#showhere {
+	background: #7a7;
+}
+
+</style></head><body>
+
+<h1>バス停さがしマップ</h1>
+<div id="mapid"></div>
+<button id=showhere>表示位置で再取得</button> <button id=gohere>現在位置へ移動</button><br>
+
+<img id=qrcode><script>addEventListener("load", () => qrcode.src = "https://chart.apis.google.com/chart?chs=140x140&cht=qr&chl=" + encodeURIComponent(document.location))</script><br>
+
+APP: CC BY <a href=https://fukuno.jig.jp/>バス停さがしマップ - 一日一創</a><br>
+LIB: CC BY <a href=https://fukuno.jig.jp/2393>簡単地図アプリ egmapjs</a><br>
+ICON: <a href=https://www.irasutoya.com/2013/10/blog-post_5408.html>バス停のイラスト | かわいいフリー素材集 いらすとや</a><br>
+DATA: CC BY <a href=https://sparql.odp.jig.jp/>odp - SPARQL</a><br>
+
+</body></html>
