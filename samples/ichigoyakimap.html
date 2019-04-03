@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="ja">
+<head>
+<meta charset='utf-8'/>
+<meta property="og:image" content="">
+<link rel="apple-touch-icon" href=""/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+<title>イチゴ焼コラボマップ - egmapjs</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+<script>"use strict"
+
+var DATA = [
+	{ image: 'hanadojo.jpg', width: 256, height: 256, lat: 35.944570, lng: 136.186230, name: 'Hana道場', url: 'http://hanadojo.com/' },
+	{ image: 'saradayaki.jpg', width: 256, height: 256, lat: 35.971787, lng: 136.179801, name: '三六サラダ焼き', url: 'https://www.sanrokusyoten-316.co.jp/' },
+	{ image: 'tanakagankyo.jpg', width: 256, height: 256, lat: 35.969919, lng: 136.180874, name: 'サラダ焼大使(田中眼鏡)', url: 'https://tanakagannkyou.com/' },
+	{ image: 'fukuokanoen.jpg', width: 256, height: 256, lat: 35.941845, lng: 136.203968, name: 'イチゴ(福岡農園)', url: '' },
+	{ image: 'uchinobudou.jpg', width: 256, height: 256, lat: 35.936074, lng: 136.208998, name: 'イチゴジャム(うちのぶどう)', url: 'https://www.facebook.com/pages/category/Food---Beverage-Company/%E3%81%BF%E3%82%84%E3%82%82%E3%81%A8%E3%81%B6%E3%81%A9%E3%81%86%E5%9C%92%E3%81%86%E3%81%A1%E3%81%AE%E3%81%B6%E3%81%A9%E3%81%86-304431483072303/' },
+	{ image: 'ichigojam.jpg', width: 256, height: 256, lat: 35.942737, lng: 136.198834, name: 'IchigoJam(めがね会館)', url: 'https://ichigojam.net/' },
+]
+
+
+window.onload = function() {
+	var map = initMap('mapid')
+	map.setZoom(4)
+
+	var lls = []
+	for (var i = 0; i < DATA.length; i++) {
+		const d = DATA[i]
+		map.addIcon(d.lat, d.lng, "<a href=" + d.url + " target=_blank><img width='300' src='" + d.image + "'><br>" + d.name + "</a>", d.image, d.width / 4, d.height / 4)
+		
+		lls.push([ d.lat, d.lng ])
+	}
+	map.fitBounds(lls)
+}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+	text-align: center;
+}
+h1 {
+	font-size: 7vh;
+	margin: 0;
+	padding: 1vh 0vh;
+	color: white;
+	background-color: #f66;
+}
+a {
+	color: gray !important;
+}
+#sub {
+	font-size: 4vw;
+}
+#mapid {
+	height: 70vh;
+}
+.leaflet-tile-container { /* 地図の色味変更 CSS3 filter */
+    x-filter: sepia(100%) brightness(95%); /* セピア */
+    x-filter: grayscale(100%) brightness(110%); /* 明るめグレースケール */
+    filter: hue-rotate(-10deg) saturate(70%) brightness(104%); /* いい感じの色？ */
+}
+.leaflet-marker-pane > a {
+	word-break: break-all;
+}
+</style>
+
+</Head>
+<body>
+<h1>イチゴ焼 コラボマップ</h1>
+<div id="mapid"></div>
+
+App: <a href=http://fukuno.jig.jp/2445>イチゴ焼コラボマップ</a> CC BY fukuno.jig.jp<br>
+Lib: <a href=http://fukuno.jig.jp/2363>egmapjs</a> CC BY fukuno.jig.jp (<a href=https://github.com/code4fukui/egmapjs>src on GitHub</a>>a)<br>
+
+</body>
+</html>
