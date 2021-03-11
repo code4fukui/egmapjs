@@ -42,7 +42,9 @@ const convertDMS2D = function(o) {
 	if (!o.lat || !o.lng)
 		return
 	const dms2d = function(dms) {
-		return (Math.floor(dms) + Math.floor(dms * 100) % 100 / 60 + Math.floor(dms * 10000) % 100 / (60 * 60)).toFixed(5)
+		// return (Math.floor(dms) + Math.floor(dms * 100) % 100 / 60 + Math.floor(dms * 10000) % 100 / (60 * 60)).toFixed(5)
+		// 度分秒の秒の小数点以下に対応する修正
+		return (Math.floor(dms) + Math.floor(dms * 100) % 100 / 60 + Math.floor(dms * 10000) % 100 / (60 * 60) + Math.floor(dms * 1000000) % 100 / (60 * 60 * 100)).toFixed(6) 
 	}
 	o.lat = dms2d(o.lat)
 	o.lng = dms2d(o.lng)
