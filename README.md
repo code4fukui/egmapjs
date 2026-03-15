@@ -1,9 +1,8 @@
 # egmapjs
-Leafletjs x 国土地理院地図 (GSIMAP)
 
-## Demo
-Kyoto Stone Monument Map  
-https://code4fukui.github.io/kyotoishibumi/
+> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
+
+Leafletjs x Geospatial Information Authority of Japan (GSIMAP)
 
 ## Features
 - Display maps using Leafletjs and GSIMAP
