@@ -1,18 +1,38 @@
 # egmapjs
-leafletjs x 地理院地図(GSIMAP)  
+Leafletjs x 国土地理院地図 (GSIMAP)
 
-## サンプル
-京都いしぶみマップ  
-https://code4fukui.github.io/kyotoishibumi/  
-JavaScriptプログラム  
-https://github.com/code4fukui/kyotoishibumi/blob/main/index.html  
+## Demo
+Kyoto Stone Monument Map  
+https://code4fukui.github.io/kyotoishibumi/
 
-## 旧チュートリアル  
-https://code4fukui.github.io/egmapjs/tutorial.html  
+## Features
+- Display maps using Leafletjs and GSIMAP
+- Add icons and markers to the map
+- Integrate with SPARQL API to display data on the map
 
-<img src=https://code4fukui.github.io/egmapjs/egmap.jpg>  
+## Requirements
+None. Works in modern web browsers.
 
-## ブログ
-簡単で無料で活用できる地図API、leafletjs x 地理院地図  
-https://fukuno.jig.jp/2393  
+## Usage
+Include the required JavaScript and CSS files in your HTML:
 
+```html
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+<script src="https://code4fukui.github.io/egmapjs/egmap.js"></script>
+```
+
+Then, create a map in your JavaScript code:
+
+```javascript
+var map = initMap('mapid');
+map.setZoom(16);
+map.panTo([35.943560, 136.188917]); // Sabae Station
+map.addIcon(35.944571, 136.186228, "Hana Dojo", "icon/hanadojo.png", 64);
+```
+
+## Data / API
+The project uses the GSIMAP (国土地理院地図) tile service provided by the Geospatial Information Authority of Japan.
+
+## License
+The project is released under the CC BY license.
