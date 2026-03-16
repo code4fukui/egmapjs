@@ -1,5 +1,5 @@
 # egmapjs
-leafletjs x 地理院地図(GSIMAP)  
+leafletjs x 地理院地図(GSIMAP)
 
 ## サンプル
 京都いしぶみマップ  
